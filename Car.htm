@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valero Login and Signup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        /* General Styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(135deg, #0047AB, #E87722);
+            margin: 0;
+            position: relative;
+        }
+        .container {
+            width: 380px;
+            padding: 40px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0px 10px 25px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .logo {
+            width: 120px;
+            margin-bottom: 15px;
+        }
+        /* Input Fields */
+        .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        /* Phone Input */
+        .phone-input {
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            overflow: hidden;
+        }
+        .country-code {
+            background: #ddd;
+            padding: 12px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            border-right: 1px solid #ccc;
+        }
+        .phone-input input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: #f5f5f5;
+        }
+        .phone-input input.error {
+            border-color: #FF3B30;
+        }
+        /* Password Field */
+        .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .password-container input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: #f5f5f5;
+        }
+        .password-container input.error {
+            border-color: #FF3B30;
+        }
+        .toggle-password {
+            padding: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        /* Buttons */
+        .button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            background-size: 200% auto;
+            background-position: 50% center;
+        }
+
+        .button span {
+            margin: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .button.processing span {
+            opacity: 0;
+        }
+
+        .button::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        .button.processing::before {
+            opacity: 1;
+            animation: pulse 1s linear infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.4;}
+            50% { transform: scale(1.1); opacity: 0.8; }
+            100% { transform: scale(1); opacity: 0.4;}
+        }
+
+        .login-button {
+            background-image: linear-gradient(to right, #6a11cb, #2575fc);
+            color: white;
+            box-shadow: 0px 4px 8px rgba(106, 17, 203, 0.3);
+            transition: background-position 0.3s ease-in-out, box-shadow 0.2s ease;
+            margin-bottom: 15px;
+        }
+        .login-button:hover {
+            background-position: 100% center;
+             box-shadow: 0px 6px 12px rgba(106, 17, 203, 0.4);
+        }
+
+        .signup-button {
+            background-image: linear-gradient(to right, #ff6e7f, #b565ff);
+            color: white;
+            border: none;
+            box-shadow: 0px 4px 8px rgba(255, 110, 127, 0.3);
+            transition: background-position 0.3s ease-in-out, box-shadow 0.2s ease;
+        }
+
+        .signup-button:hover {
+            background-position: 100% center;
+            box-shadow: 0px 6px 12px rgba(255, 110, 127, 0.4);
+        }
+
+        /* Error Messages */
+        .error-message {
+            color: #FF3B30;
+            font-size: 14px;
+            margin-top: 5px;
+            padding: 8px;
+            background: #ffe6e6;
+            border-left: 4px solid #FF3B30;
+            display: none;
+            border-radius: 5px;
+        }
+        /* Signup Form Specific Styles */
+        #signup-form {
+            display: none;
+        }
+        #signup-form .input-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        #signup-form .input-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        #signup-form input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            background: #f5f5f5;
+        }
+        #signup-form input.error {
+            border-color: #FF3B30;
+        }
+         #signup-form .password-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: #f5f5f5;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        #signup-form .password-container input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            background: #f5f5f5;
+        }
+        #signup-form .password-container input.error{
+             border-color: #FF3B30;
+        }
+        #signup-form .toggle-password {
+            padding: 12px;
+            font-size: 18px;
+            cursor: pointer;
+            opacity: 0.7;
+        }
+        .switch-form {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #555;
+        }
+        .switch-form a {
+            color: #0047AB;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .switch-form a:hover {
+            text-decoration: underline;
+        }
+        /* Verification Code Styles */
+        #verification-code-group {
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        #verification-code-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        #verification-code-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        #verification-code-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            outline: none;
+            font-size: 16px;
+            background: #e0f7fa;
+        }
+         #verification-code-input.error {
+            border-color: #FF3B30;
+        }
+
+        #verification-code-button {
+            position: absolute;
+            top: 50%;
+            right: 0;
+            transform: translateY(-50%);
+            width: 50px;
+            height: 35px;
+            border-radius: 8px;
+            background-color: #0047AB;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #FFFFFF;
+            user-select: none;
+            cursor: pointer;
+            border: 2px solid #0047;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease, box-shadow 0s ease;
+            overflow: hidden;
+        }
+
+        #verification-code-button:hover {
+             transform: translateY(-3px) scale(1.05);
+             box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        #verification-code-button span {
+            color: #FFFFFF;
+            font-family: 'Arial Black', sans-serif;
+            letter-spacing: 0;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);
+            font-weight: 900;
+            transition:  all 0.2s ease;
+        }
+       #verification-code-button:hover span{
+            transform: scale(1.2);
+            color: #E87722;
+        }
+
+        /* Loading Indicator Styles */
+        .loading-indicator {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color:  rgba(255, 255, 255, 0.8);
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .loading-indicator.processing {
+            display: flex;
+        }
+
+        .spinner {
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top: 3px solid #007bff;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Message Overlay */
+        .success-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(0, 128, 0, 0.9); /* Green with opacity */
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 10001;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .success-overlay.show {
+            opacity: 1;
+        }
+        .close-button{
+          position: absolute;
+          top: 0px;
+          right: 5px;
+          color: white;
+          cursor: pointer;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="valero-logo.png" alt="Valero Logo" class="logo">
+        <div id="login-form">
+            <div class="input-group">
+                <label>Mobile Phone Number</label>
+                <div class="phone-input">
+                    <span class="country-code">+251</span>
+                    <input type="text" id="login-phone" placeholder="Enter phone number" inputmode="numeric" pattern="\d*">
+                </div>
+                <div id="login-phone-error" class="error-message">⚠️ Please enter a valid 9-digit phone number.</div>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <div class="password-container">
+                    <input type="password" id="login-password" placeholder="Enter password" inputmode="numeric" pattern="\d*">
+                    <span class="toggle-password" onclick="togglePassword('login-password', 'login')">👁️</span>
+                </div>
+                <div id="login-password-error" class="error-message">⚠️ Password must be at least 6 characters long.</div>
+            </div>
+            <button class="button login-button" onclick="login(this)"><span>Login Now</span></button>
+            
+            <div class="switch-form">
+                <a href="#" onclick="showSignupForm()">Don't have an account? Sign Up</a>
+            </div>
+        </div>
+
+        <div id="signup-form">
+            <div class="input-group">
+                <label>Mobile Phone Number</label>
+                <div class="phone-input">
+                    <span class="country-code">+251</span>
+                    <input type="text" id="signup-phone" placeholder="Enter phone number" inputmode="numeric" pattern="\d*">
+                </div>
+                <div id="signup-phone-error" class="error-message">⚠️ Please enter a valid 9-digit phone number.</div>
+            </div>
+            <div class="input-group">
+                <label>Password</label>
+                <div class="password-container">
+                    <input type="password" id="signup-password" placeholder="Enter password" inputmode="numeric" pattern="\d*">
+                    <span class="toggle-password" onclick="togglePassword('signup-password', 'signup')">👁️</span>
+                </div>
+                <div id="signup-password-error" class="error-message">⚠️ Password must be at least 6 characters long.</div>
+            </div>
+            <div class="input-group">
+                <label>Confirm Password</label>
+                <div class="password-container">
+                    <input type="password" id="signup-confirm-password" placeholder="Confirm password" inputmode="numeric" pattern="\d*">
+                    <span class="toggle-password" onclick="togglePassword('signup-confirm-password', 'signup-confirm')">👁️</span>
+                </div>
+                <div id="signup-confirm-password-error" class="error-message">⚠️ Passwords do not match.</div>
+            </div>
+            <div id="verification-code-group">
+                <label>Verification Code</label>
+                <div id="verification-code-container">
+                    <input type="text" id="verification-code-input" placeholder="Enter verification code"  inputmode="numeric" pattern="\d*">
+                    <div id="verification-code-button" onclick="regenerateVerificationCode()">
+                        <span id="verification-code-text"></span>
+                    </div>
+                </div>
+                <div id="verification-code-error" class="error-message">⚠️ Verification code is incorrect.</div>
+            </div>
+            <button class="button signup-button" onclick="signup()"><span>Register Now</span></button>
+            <div class="switch-form">
+                <a href="#" onclick="showLoginForm()">Already have an account? Login</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-indicator">
+        <div class="spinner"></div>
+    </div>
+
+    <div id="login-success-overlay" class="success-overlay">
+        <span class="close-button" onclick="closeSuccessOverlay('login-success-overlay')">x</span>
+        Login successful!
+    </div>
+    
+    <div id="signup-success-overlay" class="success-overlay">
+        <span class="close-button" onclick="closeSuccessOverlay('signup-success-overlay')">x</span>
+        Registration successful!
+    </div>
+
+
+    <script>
+        let generatedVerificationCode = "";
+        let currentForm = "login";
+        const loadingIndicator = document.querySelector('.loading-indicator');
+
+        function generateVerificationCode() {
+            let code = "";
+            const digits = "0123456789";
+            for (let i = 0; i < 4; i++) {
+                code += digits[Math.floor(Math.random() * 10)];
+            }
+            return code;
+        }
+
+        function displayVerificationCode(code) {
+            let coloredCode = '';
+            const colors = ['#00B0FF', '#FFD700', '#388E3C', '#9C27B0'];
+            for (let i = 0; i < code.length; i++) {
+                coloredCode += `<span style="color: ${colors[i % colors.length]};font-family: 'Arial Black', sans-serif;letter-spacing: 0;text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05);">${code[i]}</span>`;
+            }
+            document.getElementById("verification-code-text").innerHTML = coloredCode;
+        }
+
+        function regenerateVerificationCode() {
+            generatedVerificationCode = generateVerificationCode();
+            displayVerificationCode(generatedVerificationCode);
+        }
+
+        function togglePassword(fieldId, formType) {
+            let field = document.getElementById(fieldId);
+            field.type = field.type === "password" ? "text" : "password";
+        }
+
+        function login(buttonElement) {
+            let phone = document.getElementById("login-phone").value;
+            let password = document.getElementById("login-password").value;
+            let phoneError = document.getElementById("login-phone-error");
+            let passwordError = document.getElementById("login-password-error");
+            let phoneInput = document.getElementById("login-phone");
+            let passwordInput = document.getElementById("login-password");
+
+
+            // Reset error messages
+            phoneError.style.display = "none";
+            passwordError.style.display = "none";
+            phoneInput.classList.remove("error");
+            passwordInput.classList.remove("error");
+
+
+            let hasErrors = false;
+
+            // Validate phone number (must be 9 digits after +251)
+            let phonePattern = /^[0-9]{9}$/;
+            if (!phonePattern.test(phone)) {
+                phoneError.style.display = "block";
+                phoneInput.classList.add("error");
+                hasErrors = true;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                passwordError.textContent = "⚠️ Password must be at least 6 characters long.";
+                passwordError.style.display = "block";
+                passwordInput.classList.add("error");
+                hasErrors = true;
+            }
+
+
+             if (hasErrors) {
+                return;
+             }
+
+
+            // Show loading indicator
+            loadingIndicator.classList.add("processing");
+
+            setTimeout(function() {
+                loadingIndicator.classList.remove("processing");
+                showSuccessOverlay('login-success-overlay');
+                setTimeout(function() {
+                    window.location.href = "home.html"; // Replace with your desired URL
+                }, 1500); // Redirect after 1.5 seconds
+            }, 1000);
+        }
+
+        function signup() {
+            let phone = document.getElementById("signup-phone").value;
+            let password = document.getElementById("signup-password").value;
+            let confirmPassword = document.getElementById("signup-confirm-password").value;
+            let verificationCodeInput = document.getElementById("verification-code-input").value;
+            let phoneError = document.getElementById("signup-phone-error");
+            let passwordError = document.getElementById("signup-password-error");
+            let confirmPasswordError = document.getElementById("signup-confirm-password-error");
+            let verificationCodeError = document.getElementById("verification-code-error");
+            let phoneInput = document.getElementById("signup-phone");
+            let passwordInput = document.getElementById("signup-password");
+            let confirmPasswordInput = document.getElementById("signup-confirm-password");
+            let verificationCodeInputControl = document.getElementById("verification-code-input");
+
+            // Reset error messages
+            phoneError.style.display = "none";
+            passwordError.style.display = "none";
+            confirmPasswordError.style.display = "none";
+            verificationCodeError.style.display = "none";
+            phoneInput.classList.remove("error");
+            passwordInput.classList.remove("error");
+            confirmPasswordInput.classList.remove("error");
+            verificationCodeInputControl.classList.remove("error");
+
+            let hasErrors = false;
+
+            // Validate phone number (must be 9 digits after +251)
+            let phonePattern = /^[0-9]{9}$/;
+            if (!phonePattern.test(phone)) {
+                phoneError.style.display = "block";
+                phoneInput.classList.add("error");
+                hasErrors = true;
+            }
+
+            // Password validation
+            if (password.length < 6) {
+                passwordError.textContent = "⚠️ Password must be at least 6 characters long.";
+                passwordError.style.display = "block";
+                passwordInput.classList.add("error");
+                hasErrors = true;
+            }
+
+             // Validate confirm password
+            if (password !== confirmPassword) {
+                confirmPasswordError.style.display = "block";
+                confirmPasswordInput.classList.add("error");
+                hasErrors = true;
+            }
+
+            // Validate verification code
+            if (verificationCodeInput !== generatedVerificationCode) {
+                verificationCodeError.style.display = "block";
+                verificationCodeInputControl.classList.add("error");
+                hasErrors = true;
+            }
+
+            if (hasErrors) {
+                 return;
+            }
+
+            showSuccessOverlay('signup-success-overlay');
+            setTimeout(function() {
+                showLoginForm();
+             }, 1500);
+
+        }
+
+        function showSignupForm() {
+            setTimeout(function() {
+                document.getElementById("login-form").style.display = "none";
+                document.getElementById("signup-form").style.display = "block";
+                regenerateVerificationCode();
+                currentForm = "signup";
+            }, 250);
+        }
+
+        function showLoginForm() {
+            setTimeout(function() {
+                document.getElementById("login-form").style.display = "block";
+                document.getElementById("signup-form").style.display = "none";
+                currentForm = "login";
+            }, 250);
+        }
+
+        window.onload = function() {
+            if (document.getElementById("signup-form").style.display === "block") {
+                regenerateVerificationCode();
+            }
+        };
+
+        function closeSuccessOverlay(overlayId){
+            document.getElementById(overlayId).classList.remove('show')
+        }
+
+        function showSuccessOverlay(overlayId) {
+            document.getElementById(overlayId).classList.add('show');
+             setTimeout(function() {
+                document.getElementById(overlayId).classList.remove('show');
+            }, 3000); // Hide after 3 seconds
+        }
+    </script>
+</body>
+</html>
